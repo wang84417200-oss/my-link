@@ -1,108 +1,109 @@
 "use client";
 
 import { motion, Variants } from "framer-motion";
-import { Code, Mail, ArrowRight } from "lucide-react";
+import { Mail, ArrowRight, Code } from "lucide-react";
 
 export default function Home() {
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2,
-      },
+      transition: { staggerChildren: 0.15, delayChildren: 0.1 },
     },
   };
 
   const itemVariants: Variants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { y: 40, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 10,
-      },
+      transition: { type: "spring", stiffness: 250, damping: 20 },
     },
   };
 
+  const borderClass = "border-4 border-black dark:border-[#FFFBEB]";
+  const shadowClass = "shadow-[8px_8px_0_0_rgba(0,0,0,1)] dark:shadow-[8px_8px_0_0_#FFFBEB]";
+  const hoverClass = "hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] dark:hover:shadow-[2px_2px_0_0_#FFFBEB] hover:translate-x-[6px] hover:translate-y-[6px] transition-all duration-200";
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-8">
+    <div className="flex min-h-screen flex-col items-center p-4 sm:p-8 lg:p-12 overflow-hidden">
       <motion.div
-        className="w-full max-w-3xl overflow-hidden rounded-3xl backdrop-blur-3xl bg-white/40 dark:bg-black/40 border border-white/40 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.4)]"
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="w-full max-w-[1200px] flex flex-col gap-6 sm:gap-8 mt-8 sm:mt-12"
       >
-        <div className="px-6 py-12 sm:px-12 sm:py-20 flex flex-col items-center text-center">
-          <motion.div
-            className="mb-8 relative group"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full blur opacity-40 group-hover:opacity-75 transition duration-500"></div>
-            <div className="relative h-32 w-32 sm:h-40 sm:w-40 rounded-full border-4 border-white/50 dark:border-white/20 bg-gradient-to-tr from-indigo-200 to-purple-300 dark:from-indigo-900 dark:to-purple-800 flex items-center justify-center shadow-2xl overflow-hidden">
-              <span className="text-4xl sm:text-5xl font-extrabold text-white/80 mix-blend-overlay">WH</span>
+        {/* Header Section */}
+        <motion.header
+          variants={itemVariants}
+          className={`w-full ${borderClass} bg-[#FEF08A] dark:bg-zinc-900 p-8 sm:p-12 lg:p-16 ${shadowClass}`}
+        >
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="flex flex-col gap-2">
+              <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black uppercase tracking-tighter text-black dark:text-[#FFFBEB]">
+                HaEun<br />Wang
+              </h1>
             </div>
-          </motion.div>
+            <div className={`mt-4 w-fit px-6 py-3 bg-white dark:bg-black text-black dark:text-white font-bold text-xl sm:text-2xl uppercase border-4 border-black dark:border-[#FFFBEB]`}>
+              Frontend Dev
+            </div>
+          </div>
+        </motion.header>
 
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="flex flex-col items-center gap-6 text-center w-full"
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+          {/* About Section */}
+          <motion.section
+            variants={itemVariants}
+            className={`lg:col-span-2 ${borderClass} bg-white dark:bg-black p-8 sm:p-12 ${shadowClass}`}
           >
-            <motion.h1
-              variants={itemVariants}
-              className="text-4xl sm:text-6xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 pb-2"
-            >
-              왕하은
-            </motion.h1>
-            
-            <motion.h2 
-              variants={itemVariants}
-              className="text-lg sm:text-xl font-medium text-slate-600 dark:text-slate-300 max-w-2xl"
-            >
-              프론트엔드 개발자
-            </motion.h2>
+            <h3 className="text-3xl sm:text-4xl font-black mb-6 uppercase border-b-4 border-black dark:border-[#FFFBEB] pb-4 inline-block">
+              About Me
+            </h3>
+            <p className="text-lg sm:text-xl md:text-2xl font-medium leading-relaxed mt-4">
+              안녕하세요. 심플하고 명확한 가치를 전달하는 개발자 <strong className="bg-[#FEF08A] dark:bg-zinc-800 px-2 py-1 mx-1 border-2 border-black dark:border-white">왕하은</strong>입니다.
+              <br /><br />
+              사용자 경험(UX)을 가장 중요하게 생각하며, 구조적이면서도 아름답고 생동감 넘치는 웹 애플리케이션을 만드는 일에 열정을 쏟고 있습니다. 복잡한 문제를 직관적으로 풀고, 사용자에게 강렬하고 즐거운 인터페이스를 제공하는 것을 지향합니다.
+            </p>
+          </motion.section>
 
-            <motion.p
-              variants={itemVariants}
-              className="text-base sm:text-lg text-slate-500 dark:text-slate-400 max-w-xl leading-relaxed mt-2"
+          {/* Contact / Links Section */}
+          <motion.div
+            variants={itemVariants}
+            className="flex flex-col sm:flex-row lg:flex-col gap-6 sm:gap-8"
+          >
+            <a
+              href="mailto:contact@example.com"
+              className={`flex-1 flex flex-col items-center justify-center gap-4 ${borderClass} bg-[#F472B6] p-8 sm:p-10 group ${shadowClass} ${hoverClass}`}
             >
-              안녕하세요. 심플하고 명확한 가치를 전달하는 개발자 왕하은입니다. 
-              사용자 경험(UX)을 중요하게 생각하며, 아름답고 동적인 웹 애플리케이션을 만드는 것에 열정이 있습니다.
-            </motion.p>
+              <div className="bg-black text-[#F472B6] p-4 rounded-full">
+                <Mail className="w-10 h-10" />
+              </div>
+              <span className="text-2xl sm:text-3xl font-black text-black">CONTACT</span>
+            </a>
 
-            <motion.div
-              variants={itemVariants}
-              className="flex flex-wrap justify-center gap-4 mt-8 w-full"
+            <a
+              href="https://github.com/wang84417200-oss"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`flex-1 flex flex-col items-center justify-center gap-4 ${borderClass} bg-[#60A5FA] p-8 sm:p-10 group ${shadowClass} ${hoverClass}`}
             >
-              <a
-                href="mailto:contact@example.com"
-                className="group relative inline-flex h-12 items-center justify-center overflow-hidden rounded-full bg-slate-900 dark:bg-white px-8 font-medium text-white dark:text-slate-900 transition-all hover:scale-105 active:scale-95 shadow-md hover:shadow-xl dark:shadow-white/10"
-              >
-                <div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-12deg)_translateX(-100%)] group-hover:duration-1000 group-hover:[transform:skew(-12deg)_translateX(100%)] bg-white/20 dark:bg-black/10" />
-                <Mail className="mr-2 h-5 w-5" />
-                <span>Contact Me</span>
-              </a>
-
-              <a
-                href="https://github.com/wang84417200-oss"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex h-12 items-center justify-center rounded-full border border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 px-8 font-medium text-slate-900 dark:text-white transition-all hover:bg-slate-100 dark:hover:bg-slate-800 hover:scale-105 active:scale-95 shadow-sm backdrop-blur-sm"
-              >
-                <Code className="mr-2 h-5 w-5" />
-                <span>GitHub</span>
-                <ArrowRight className="ml-2 h-4 w-4 opacity-50 group-hover:translate-x-1 transition-transform" />
-              </a>
-            </motion.div>
+              <div className="bg-black text-[#60A5FA] p-4 rounded-full">
+                <Code className="w-10 h-10" />
+              </div>
+              <span className="text-2xl sm:text-3xl font-black text-black">GITHUB</span>
+            </a>
           </motion.div>
         </div>
+
+        {/* Footer Banner */}
+        <motion.footer
+          variants={itemVariants}
+          className={`w-full ${borderClass} bg-[#34D399] p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-4 mt-2 sm:mt-4 ${shadowClass}`}
+        >
+          <span className="text-2xl sm:text-3xl font-black text-black uppercase tracking-tight">Let's build something bold</span>
+          <ArrowRight className="w-10 h-10 text-black hidden sm:block animate-pulse" />
+        </motion.footer>
+
       </motion.div>
     </div>
   );
