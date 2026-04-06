@@ -122,8 +122,41 @@
     }
   body {
     @apply bg-background text-foreground;
+    background-image: 
+      radial-gradient(at 0% 0%, oklch(0.8 0.1 260 / 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, oklch(0.7 0.15 300 / 0.1) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, oklch(0.8 0.1 200 / 0.1) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, oklch(0.7 0.12 320 / 0.15) 0px, transparent 50%);
+    background-attachment: fixed;
     }
   html {
     @apply font-sans;
     }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-xl;
+  }
+  .dark .glass {
+    @apply bg-black/20 backdrop-blur-md border border-white/10 shadow-2xl;
+  }
+  
+  .animate-reveal {
+    animation-name: reveal;
+    animation-duration: 0.6s;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-fill-mode: both;
+  }
+
+  @keyframes reveal {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
