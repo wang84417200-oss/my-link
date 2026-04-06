@@ -1,64 +1,97 @@
 import { dummyLinks } from "@/data/link";
 import { Card, CardContent } from "@/components/ui/card";
+import { RiArrowRightSLine, RiShareLine, RiMore2Fill } from "@remixicon/react";
 
 export default function Page() {
   return (
-    <div className="flex min-h-svh p-6">
-      <main className="mx-auto flex w-full max-w-md flex-col items-center gap-8 pt-10">
-        {/* Profile Section */}
-        <div className="flex flex-col items-center gap-4 text-center">
-          {/* 아바타 플레이스홀더 (기본 텍스트 형태 등) */}
-          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-muted text-4xl text-muted-foreground">
-            <span role="img" aria-label="프로필">🧑‍💻</span>
-          </div>
-          <div>
-            <h1 className="text-xl font-bold">@MyLinkProfile</h1>
-            <p className="mt-1 text-sm text-muted-foreground">나만의 모든 링크를 한 곳에서 확인하세요</p>
-          </div>
+    <div className="relative min-h-svh overflow-hidden selection:bg-primary/30">
+      {/* Main Content Area */}
+      <main className="relative z-10 mx-auto flex w-full max-w-md flex-col items-center px-6 pt-16 pb-20">
+        
+        {/* Top Actions (Share/More) */}
+        <div className="absolute top-6 right-6 flex gap-2">
+          <button className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-foreground/80 backdrop-blur-sm transition-colors hover:bg-white/20 active:scale-95">
+            <RiShareLine size={20} />
+          </button>
+          <button className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-foreground/80 backdrop-blur-sm transition-colors hover:bg-white/20 active:scale-95">
+            <RiMore2Fill size={20} />
+          </button>
         </div>
 
-        {/* Links List */}
-        <div className="flex w-full flex-col gap-4">
-          {dummyLinks.map((link) => (
+        {/* Profile Section */}
+        <div className="flex animate-reveal flex-col items-center text-center">
+          {/* Avatar with Premium Border */}
+          <div className="relative group">
+            <div className="absolute -inset-1 rounded-full bg-linear-to-tr from-primary to-violet-500 opacity-75 blur-sm transition duration-1000 group-hover:opacity-100 group-hover:duration-200"></div>
+            <div className="relative flex h-28 w-28 items-center justify-center rounded-full bg-card ring-4 ring-background/50 text-5xl">
+              <span role="img" aria-label="프로필">🧑‍💻</span>
+            </div>
+          </div>
+          
+          <div className="mt-6 flex flex-col gap-1">
+            <h1 className="text-2xl font-black tracking-tight text-foreground">@MyLinkProfile</h1>
+            <p className="text-sm font-medium text-muted-foreground">김철수 (Chul-soo Kim)</p>
+          </div>
+          
+          <p className="mt-4 max-w-[280px] text-sm leading-relaxed text-muted-foreground/80">
+            디지털 노마드 & 컨텐츠 크리에이터 ✨<br/>
+            세상의 모든 유용한 정보를 연결합니다.
+          </p>
+        </div>
+
+        {/* Links List with Staggered Reveal */}
+        <div className="mt-12 flex w-full flex-col gap-4">
+          {dummyLinks.map((link, index) => (
             <a
               key={link.id}
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="block w-full transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              className="animate-reveal group block w-full"
+              style={{ animationDelay: `${(index + 1) * 100}ms` }}
             >
-              <Card className="group overflow-hidden border-border bg-card shadow-sm transition-colors hover:border-primary/50 hover:bg-accent/50">
+              <Card className="glass overflow-hidden border-border/5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-primary/10">
                 <CardContent className="flex items-center gap-4 p-4">
-                  {/* 아이콘 */}
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-background shadow-xs">
+                  {/* Icon Wrapper */}
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/5 shadow-inner transition-transform group-hover:scale-110">
                     {link.icon ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={link.icon}
                         alt={`${link.title} icon`}
-                        className="h-6 w-6"
-                        width={24}
-                        height={24}
+                        className="h-7 w-7 drop-shadow-sm"
+                        width={28}
+                        height={28}
                       />
                     ) : (
-                      <div className="h-6 w-6 rounded-full bg-muted" />
+                      <div className="h-7 w-7 rounded-full bg-muted" />
                     )}
                   </div>
                   
-                  {/* 타이틀 */}
-                  <div className="flex flex-1 flex-col justify-center">
-                    <span className="text-lg font-semibold tracking-tight">{link.title}</span>
+                  {/* Title & Click Count */}
+                  <div className="flex flex-1 flex-col truncate">
+                    <span className="text-[17px] font-bold tracking-tight text-foreground/90">{link.title}</span>
+                    <span className="text-[11px] font-semibold text-muted-foreground/60 uppercase tracking-widest">
+                       {link.clicks.toLocaleString()} clicks
+                    </span>
                   </div>
                   
-                  {/* 클릭수 뱃지 */}
-                  <div className="hidden shrink-0 items-center justify-center rounded-full bg-muted/80 px-3 py-1 text-xs font-medium text-muted-foreground group-hover:flex">
-                    클릭 {link.clicks}회
+                  {/* Arrow Icon */}
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground/40 transition-colors group-hover:bg-primary/10 group-hover:text-primary">
+                    <RiArrowRightSLine size={24} />
                   </div>
                 </CardContent>
               </Card>
             </a>
           ))}
         </div>
+
+        {/* Footer Branding */}
+        <footer className="mt-20 animate-reveal" style={{ animationDelay: '800ms' }}>
+          <div className="flex items-center gap-2 opacity-40 transition-opacity hover:opacity-100">
+            <span className="text-xs font-bold uppercase tracking-widest">MyLink.me</span>
+          </div>
+        </footer>
       </main>
     </div>
   );
