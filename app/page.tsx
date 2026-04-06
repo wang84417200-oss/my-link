@@ -1,8 +1,26 @@
+"use client";
+
+import { useState } from "react";
 import { dummyLinks } from "@/data/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { RiArrowRightSLine, RiShareLine, RiMore2Fill } from "@remixicon/react";
+import { AddLinkDialog } from "@/components/add-link-dialog";
+import { getFaviconUrl } from "@/lib/utils";
 
 export default function Page() {
+  const [links, setLinks] = useState(dummyLinks);
+
+  const handleAddLink = (title: string, url: string) => {
+    const newLink = {
+      id: Date.now().toString(),
+      title,
+      url,
+      icon: getFaviconUrl(url),
+      clicks: 0,
+    };
+    setLinks([newLink, ...links]);
+  };
+
   return (
     <div className="relative min-h-svh overflow-hidden selection:bg-primary/30">
       {/* Main Content Area */}
@@ -39,16 +57,21 @@ export default function Page() {
           </p>
         </div>
 
+        {/* Action Section */}
+        <div className="mt-10 w-full animate-reveal" style={{ animationDelay: '400ms' }}>
+          <AddLinkDialog onAdd={handleAddLink} />
+        </div>
+
         {/* Links List with Staggered Reveal */}
-        <div className="mt-12 flex w-full flex-col gap-4">
-          {dummyLinks.map((link, index) => (
+        <div className="mt-6 flex w-full flex-col gap-4">
+          {links.map((link, index) => (
             <a
               key={link.id}
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
               className="animate-reveal group block w-full"
-              style={{ animationDelay: `${(index + 1) * 100}ms` }}
+              style={{ animationDelay: `${(index + 1) * 100 + 400}ms` }}
             >
               <Card className="glass overflow-hidden border-border/5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-primary/10">
                 <CardContent className="flex items-center gap-4 p-4">
