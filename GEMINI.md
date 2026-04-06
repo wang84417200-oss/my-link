@@ -48,3 +48,8 @@ This file serves as a guide for `Gemini CLI` to understand the project structure
 - Profile image uploads are not supported; the Google account avatar is used by default.
 - Changing `displayName` updates the public URL slug, so duplication checks are critical.
 - Refer to `@docs/UserScenario.md` for detailed user scenarios.
+
+## 6. Language & Documentation Policy
+- **공통 지침**: 모든 대화, 구현 계획(Implementation Plan), 태스크(Task), 워크스루(Walkthrough) 및 문서는 반드시 **한국어**로 작성합니다.
+- **코드**: 변수명, 함수명, 주석 등 코드 내 요소는 영어를 기본으로 하되, 필요에 따라 한국어 주석을 병행할 수 있습니다.
+- **커밋 메시지**: 상세하게 한국어로 작성합니다.
