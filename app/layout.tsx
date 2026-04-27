@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { Geist, Geist_Mono, Inter } from "next/font/google"
 
 import "./globals.css"
@@ -11,6 +12,12 @@ const fontMono = Geist_Mono({
   variable: "--font-mono",
 })
 
+export const metadata: Metadata = {
+  title: "MyLink - 나만의 링크 프로필",
+  description: "여러 개의 링크를 하나의 페이지로 정리하고 나만의 브랜딩을 시작해보세요.",
+}
+
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -18,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="ko"
       suppressHydrationWarning
       className={cn("antialiased", fontMono.variable, "font-sans", inter.variable)}
     >
