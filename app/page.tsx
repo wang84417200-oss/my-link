@@ -4,9 +4,20 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { RiArrowRightSLine, RiShareLine, RiMore2Fill, RiLoader4Line } from "@remixicon/react";
 import { AddLinkDialog } from "@/components/add-link-dialog";
+import { LinkCard } from "@/components/link-card";
 import { getFaviconUrl } from "@/lib/utils";
 import { db } from "@/lib/firebase";
-import { collection, doc, addDoc, getDocs, orderBy, query, serverTimestamp } from "firebase/firestore";
+import { 
+  collection, 
+  doc, 
+  addDoc, 
+  getDocs, 
+  orderBy, 
+  query, 
+  serverTimestamp,
+  updateDoc,
+  deleteDoc 
+} from "firebase/firestore";
 
 interface LinkData {
   id: string;
@@ -76,6 +87,38 @@ export default function Page() {
     }
   };
 
+  const handleUpdateLink = async (id: string, title: string, url: string) => {
+    try {
+      const icon = getFaviconUrl(url);
+      const linkDocRef = doc(db, "users", "anonymous", "links", id);
+      
+      await updateDoc(linkDocRef, {
+        title,
+        url,
+        icon,
+      });
+
+      // 로컬 상태 업데이트 (갱신형)
+      setLinks(prev => prev.map(link => 
+        link.id === id ? { ...link, title, url, icon } : link
+      ));
+    } catch (error) {
+      console.error("Error updating link: ", error);
+    }
+  };
+
+  const handleDeleteLink = async (id: string) => {
+    try {
+      const linkDocRef = doc(db, "users", "anonymous", "links", id);
+      await deleteDoc(linkDocRef);
+
+      // 로컬 상태 업데이트 (갱신형)
+      setLinks(prev => prev.filter(link => link.id !== id));
+    } catch (error) {
+      console.error("Error deleting link: ", error);
+    }
+  };
+
   return (
     <div className="relative min-h-svh overflow-hidden selection:bg-primary/30">
       {/* Add Loading Indicator Overlay */}
@@ -142,47 +185,13 @@ export default function Page() {
             ))
           ) : (
             links.map((link, index) => (
-              <a
+              <LinkCard 
                 key={link.id}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="animate-reveal group block w-full"
-                style={{ animationDelay: `${(index + 1) * 100 + 400}ms` }}
-              >
-                <Card className="glass overflow-hidden border-border/5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-primary/10">
-                  <CardContent className="flex items-center gap-4 p-4">
-                    {/* Icon Wrapper */}
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/5 shadow-inner transition-transform group-hover:scale-110">
-                      {link.icon ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={link.icon}
-                          alt={`${link.title} icon`}
-                          className="h-7 w-7 drop-shadow-sm"
-                          width={28}
-                          height={28}
-                        />
-                      ) : (
-                        <div className="h-7 w-7 rounded-full bg-muted" />
-                      )}
-                    </div>
-                    
-                    {/* Title & Click Count */}
-                    <div className="flex flex-1 flex-col truncate">
-                      <span className="text-[17px] font-bold tracking-tight text-foreground/90">{link.title}</span>
-                      <span className="text-[11px] font-semibold text-muted-foreground/60 uppercase tracking-widest">
-                         {link.clicks.toLocaleString()} clicks
-                      </span>
-                    </div>
-                    
-                    {/* Arrow Icon */}
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground/40 transition-colors group-hover:bg-primary/10 group-hover:text-primary">
-                      <RiArrowRightSLine size={24} />
-                    </div>
-                  </CardContent>
-                </Card>
-              </a>
+                link={link}
+                index={index}
+                onUpdate={handleUpdateLink}
+                onDelete={handleDeleteLink}
+              />
             ))
           )}
         </div>

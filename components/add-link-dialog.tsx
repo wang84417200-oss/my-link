@@ -163,8 +163,9 @@ export function AddLinkDialog({ onAdd }: AddLinkDialogProps) {
               >
                 {form.formState.isSubmitting ? (
                   <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
-                ) : null}
-                {form.formState.isSubmitting ? "추가 중..." : "목록에 추가하기"}
+                ) : (
+                  "목록에 추가하기"
+                )}
               </Button>
             </div>
           </form>
