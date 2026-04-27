@@ -1,24 +1,72 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { dummyLinks } from "@/data/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { RiArrowRightSLine, RiShareLine, RiMore2Fill } from "@remixicon/react";
 import { AddLinkDialog } from "@/components/add-link-dialog";
 import { getFaviconUrl } from "@/lib/utils";
+import { db } from "@/lib/firebase";
+import { collection, doc, addDoc, getDocs, orderBy, query, serverTimestamp } from "firebase/firestore";
+
+interface LinkData {
+  id: string;
+  title: string;
+  url: string;
+  icon?: string;
+  clicks: number;
+  createdAt?: any;
+}
 
 export default function Page() {
-  const [links, setLinks] = useState(dummyLinks);
+  const [links, setLinks] = useState<LinkData[]>([]);
 
-  const handleAddLink = (title: string, url: string) => {
-    const newLink = {
-      id: Date.now().toString(),
+  useEffect(() => {
+    const fetchLinks = async () => {
+      try {
+        const userDocRef = doc(db, "users", "anonymouse");
+        const linksCollectionRef = collection(userDocRef, "links");
+        const q = query(linksCollectionRef, orderBy("createdAt", "desc"));
+        const snapshot = await getDocs(q);
+        
+        const fetchedLinks = snapshot.docs.map(doc => ({ 
+          id: doc.id, 
+          ...doc.data() 
+        })) as LinkData[];
+        
+        setLinks(fetchedLinks);
+      } catch (error) {
+        console.error("Error fetching links:", error);
+      }
+    };
+    fetchLinks();
+  }, []);
+
+  const handleAddLink = async (title: string, url: string) => {
+    const icon = getFaviconUrl(url);
+    const newLinkData = {
       title,
       url,
-      icon: getFaviconUrl(url),
+      icon,
       clicks: 0,
+      createdAt: serverTimestamp(),
     };
-    setLinks([newLink, ...links]);
+    
+    try {
+      const userDocRef = doc(db, "users", "anonymouse");
+      const linksCollectionRef = collection(userDocRef, "links");
+      const docRef = await addDoc(linksCollectionRef, newLinkData);
+      
+      const addedLink: LinkData = { 
+        id: docRef.id, 
+        ...newLinkData, 
+        createdAt: new Date() 
+      };
+      
+      setLinks([addedLink, ...links]);
+    } catch (error) {
+      console.error("Error adding link: ", error);
+    }
   };
 
   return (
