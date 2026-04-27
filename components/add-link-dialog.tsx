@@ -41,7 +41,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 interface AddLinkDialogProps {
-  onAdd: (title: string, url: string) => void;
+  onAdd: (title: string, url: string) => Promise<void>;
 }
 
 export function AddLinkDialog({ onAdd }: AddLinkDialogProps) {
@@ -56,13 +56,13 @@ export function AddLinkDialog({ onAdd }: AddLinkDialogProps) {
     },
   });
 
-  const onSubmit = (values: FormValues) => {
+  const onSubmit = async (values: FormValues) => {
     // URL이 http로 시작하지 않으면 https://를 붙여줌
     const formattedUrl = values.url.startsWith("http")
       ? values.url
       : `https://${values.url}`;
 
-    onAdd(values.title, formattedUrl);
+    await onAdd(values.title, formattedUrl);
     form.reset();
     setOpen(false);
   };
@@ -158,9 +158,13 @@ export function AddLinkDialog({ onAdd }: AddLinkDialogProps) {
             <div className="pt-4">
               <Button
                 type="submit"
-                className="w-full h-14 text-lg font-black bg-primary text-primary-foreground shadow-[0_8px_16px_-4px_oklch(var(--primary)/0.3)] hover:shadow-[0_12px_20px_-4px_oklch(var(--primary)/0.4)] active:scale-95 transition-all rounded-xl"
+                disabled={form.formState.isSubmitting}
+                className="w-full h-14 text-lg font-black bg-primary text-primary-foreground shadow-[0_8px_16px_-4px_oklch(var(--primary)/0.3)] hover:shadow-[0_12px_20px_-4px_oklch(var(--primary)/0.4)] active:scale-95 transition-all rounded-xl flex items-center justify-center gap-2"
               >
-                목록에 추가하기
+                {form.formState.isSubmitting ? (
+                  <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+                ) : null}
+                {form.formState.isSubmitting ? "추가 중..." : "목록에 추가하기"}
               </Button>
             </div>
           </form>

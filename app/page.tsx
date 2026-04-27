@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { dummyLinks } from "@/data/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { RiArrowRightSLine, RiShareLine, RiMore2Fill } from "@remixicon/react";
+import { RiArrowRightSLine, RiShareLine, RiMore2Fill, RiLoader4Line } from "@remixicon/react";
 import { AddLinkDialog } from "@/components/add-link-dialog";
 import { getFaviconUrl } from "@/lib/utils";
 import { db } from "@/lib/firebase";
@@ -20,11 +19,14 @@ interface LinkData {
 
 export default function Page() {
   const [links, setLinks] = useState<LinkData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     const fetchLinks = async () => {
       try {
-        const userDocRef = doc(db, "users", "anonymouse");
+        setIsLoading(true);
+        const userDocRef = doc(db, "users", "anonymous");
         const linksCollectionRef = collection(userDocRef, "links");
         const q = query(linksCollectionRef, orderBy("createdAt", "desc"));
         const snapshot = await getDocs(q);
@@ -37,12 +39,15 @@ export default function Page() {
         setLinks(fetchedLinks);
       } catch (error) {
         console.error("Error fetching links:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchLinks();
   }, []);
 
   const handleAddLink = async (title: string, url: string) => {
+    setIsAdding(true);
     const icon = getFaviconUrl(url);
     const newLinkData = {
       title,
@@ -53,7 +58,7 @@ export default function Page() {
     };
     
     try {
-      const userDocRef = doc(db, "users", "anonymouse");
+      const userDocRef = doc(db, "users", "anonymous");
       const linksCollectionRef = collection(userDocRef, "links");
       const docRef = await addDoc(linksCollectionRef, newLinkData);
       
@@ -66,11 +71,21 @@ export default function Page() {
       setLinks([addedLink, ...links]);
     } catch (error) {
       console.error("Error adding link: ", error);
+    } finally {
+      setIsAdding(false);
     }
   };
 
   return (
     <div className="relative min-h-svh overflow-hidden selection:bg-primary/30">
+      {/* Add Loading Indicator Overlay */}
+      {isAdding && (
+        <div className="fixed top-6 left-1/2 z-50 flex -translate-x-1/2 animate-in fade-in slide-in-from-top-4 items-center gap-3 rounded-full border border-primary/20 bg-background/80 px-5 py-2.5 font-bold text-primary shadow-2xl backdrop-blur-xl">
+          <RiLoader4Line className="h-5 w-5 animate-spin" />
+          <span className="text-[14px] tracking-tight">새로운 링크를 추가하는 중...</span>
+        </div>
+      )}
+
       {/* Main Content Area */}
       <main className="relative z-10 mx-auto flex w-full max-w-md flex-col items-center px-6 pt-16 pb-20">
         
@@ -112,49 +127,64 @@ export default function Page() {
 
         {/* Links List with Staggered Reveal */}
         <div className="mt-6 flex w-full flex-col gap-4">
-          {links.map((link, index) => (
-            <a
-              key={link.id}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="animate-reveal group block w-full"
-              style={{ animationDelay: `${(index + 1) * 100 + 400}ms` }}
-            >
-              <Card className="glass overflow-hidden border-border/5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-primary/10">
+          {isLoading ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <Card key={i} className="glass overflow-hidden border-border/5">
                 <CardContent className="flex items-center gap-4 p-4">
-                  {/* Icon Wrapper */}
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/5 shadow-inner transition-transform group-hover:scale-110">
-                    {link.icon ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={link.icon}
-                        alt={`${link.title} icon`}
-                        className="h-7 w-7 drop-shadow-sm"
-                        width={28}
-                        height={28}
-                      />
-                    ) : (
-                      <div className="h-7 w-7 rounded-full bg-muted" />
-                    )}
+                  <div className="h-12 w-12 shrink-0 animate-pulse rounded-2xl bg-black/5 dark:bg-white/5" />
+                  <div className="flex flex-1 flex-col gap-2">
+                    <div className="h-4 w-32 animate-pulse rounded-md bg-black/5 dark:bg-white/5" />
+                    <div className="h-3 w-16 animate-pulse rounded-md bg-black/5 dark:bg-white/5" />
                   </div>
-                  
-                  {/* Title & Click Count */}
-                  <div className="flex flex-1 flex-col truncate">
-                    <span className="text-[17px] font-bold tracking-tight text-foreground/90">{link.title}</span>
-                    <span className="text-[11px] font-semibold text-muted-foreground/60 uppercase tracking-widest">
-                       {link.clicks.toLocaleString()} clicks
-                    </span>
-                  </div>
-                  
-                  {/* Arrow Icon */}
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground/40 transition-colors group-hover:bg-primary/10 group-hover:text-primary">
-                    <RiArrowRightSLine size={24} />
-                  </div>
+                  <div className="h-8 w-8 animate-pulse rounded-full bg-black/5 dark:bg-white/5" />
                 </CardContent>
               </Card>
-            </a>
-          ))}
+            ))
+          ) : (
+            links.map((link, index) => (
+              <a
+                key={link.id}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="animate-reveal group block w-full"
+                style={{ animationDelay: `${(index + 1) * 100 + 400}ms` }}
+              >
+                <Card className="glass overflow-hidden border-border/5 transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-primary/10">
+                  <CardContent className="flex items-center gap-4 p-4">
+                    {/* Icon Wrapper */}
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/5 shadow-inner transition-transform group-hover:scale-110">
+                      {link.icon ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={link.icon}
+                          alt={`${link.title} icon`}
+                          className="h-7 w-7 drop-shadow-sm"
+                          width={28}
+                          height={28}
+                        />
+                      ) : (
+                        <div className="h-7 w-7 rounded-full bg-muted" />
+                      )}
+                    </div>
+                    
+                    {/* Title & Click Count */}
+                    <div className="flex flex-1 flex-col truncate">
+                      <span className="text-[17px] font-bold tracking-tight text-foreground/90">{link.title}</span>
+                      <span className="text-[11px] font-semibold text-muted-foreground/60 uppercase tracking-widest">
+                         {link.clicks.toLocaleString()} clicks
+                      </span>
+                    </div>
+                    
+                    {/* Arrow Icon */}
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground/40 transition-colors group-hover:bg-primary/10 group-hover:text-primary">
+                      <RiArrowRightSLine size={24} />
+                    </div>
+                  </CardContent>
+                </Card>
+              </a>
+            ))
+          )}
         </div>
 
         {/* Footer Branding */}
