@@ -17,20 +17,16 @@ import { db, auth } from "@/lib/firebase";
 import { 
   collection, 
   doc, 
-  addDoc, 
   getDocs, 
-  orderBy, 
   query, 
-  serverTimestamp,
-  updateDoc,
-  deleteDoc,
-  getDoc,
-  setDoc,
-  where
+  where,
 } from "firebase/firestore";
 import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User } from "firebase/auth";
 
 import { InlineEditField } from "@/components/inline-edit-field";
+import { LinkData, UserData } from "@/types";
+import { useUserData } from "@/hooks/use-user-data";
+import { useLinks } from "@/hooks/use-links";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,34 +38,28 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Toaster, toast } from "sonner";
 
-interface LinkData {
-  id: string;
-  title: string;
-  url: string;
-  icon?: string;
-  clicks: number;
-  createdAt?: any;
-  updatedAt?: any;
-}
-
-interface UserData {
-  username: string;
-  displayName: string;
-  bio: string;
-  photoURL: string;
-}
+// 로컬 인터페이스 정의 제거 (types/index에서 임포트됨)
 
 export default function Page() {
-  const [links, setLinks] = useState<LinkData[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAdding, setIsAdding] = useState(false);
-
   const [user, setUser] = useState<User | null>(null);
-  const [userData, setUserData] = useState<UserData | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
-  
-  // 프로필 인라인 편집을 위한 상태 관리는 InlineEditField 내부에서 처리됨
-  // displayName 중복 체크 함수
+
+  // TanStack Query 커스텀 훅 도입
+  const { userData, isLoading: isUserLoading, updateProfile } = useUserData(user);
+  const { links, isLoading: isLinksLoading, addLink, updateLink, deleteLink, isAdding } = useLinks(user);
+
+  const isLoading = isUserLoading || isLinksLoading;
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+      setIsAuthLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // displayName 중복 체크 함수 (Firestore 직접 조회 유지)
   const checkDisplayName = async (newDisplayName: string) => {
     if (newDisplayName === userData?.displayName) return null;
     
@@ -93,23 +83,18 @@ export default function Page() {
   };
 
   const handleUpdateProfile = async (field: keyof UserData, value: string) => {
-    if (!user || !userData) return;
-    
     const trimmedValue = value.trim();
-    if (userData[field] === trimmedValue) return;
+    if (userData?.[field] === trimmedValue) return;
 
     try {
-      const userRef = doc(db, "users", user.uid);
-      await updateDoc(userRef, {
-        [field]: trimmedValue
-      });
-      
-      setUserData({
-        ...userData,
-        [field]: trimmedValue
-      });
-      
-      toast.success("프로필이 업데이트되었습니다.");
+      updateProfile({ field, value: trimmedValue })
+        .then(() => {
+          toast.success("프로필이 업데이트되었습니다.");
+        })
+        .catch((error) => {
+          console.error("Error updating profile:", error);
+          toast.error("업데이트 중 오류가 발생했습니다.");
+        });
     } catch (error) {
       console.error("Error updating profile:", error);
       toast.error("업데이트 중 오류가 발생했습니다.");
@@ -117,59 +102,43 @@ export default function Page() {
     }
   };
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        // 유저 문서 조회 또는 생성
-        const userDocRef = doc(db, "users", currentUser.uid);
-        const userDocSnap = await getDoc(userDocRef);
-        
-        if (userDocSnap.exists()) {
-          setUserData(userDocSnap.data() as UserData);
-        } else {
-          // 신규 유저 초기 데이터
-          const newUserData: UserData = {
-            username: currentUser.displayName || "이름 없음",
-            displayName: currentUser.email ? currentUser.email.split('@')[0] : "user_" + currentUser.uid.slice(0, 5),
-            bio: "새로운 마이링크가 생성되었습니다. 나만의 멋진 소개글을 적어주세요!",
-            photoURL: currentUser.photoURL || "",
-          };
-          await setDoc(userDocRef, newUserData);
-          setUserData(newUserData);
-        }
-        
-        // 링크 데이터 조회 (link 컬렉션으로 변경됨)
-        fetchLinks(currentUser.uid);
-      } else {
-        setLinks([]);
-        setUserData(null);
-        setIsLoading(false);
-      }
-      setIsAuthLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  const fetchLinks = async (uid: string) => {
+  const handleAddLink = async (title: string, url: string) => {
+    const icon = getFaviconUrl(url);
     try {
-      setIsLoading(true);
-      const userDocRef = doc(db, "users", uid);
-      const linksCollectionRef = collection(userDocRef, "link");
-      const q = query(linksCollectionRef, orderBy("createdAt", "desc"));
-      const snapshot = await getDocs(q);
-      
-      const fetchedLinks = snapshot.docs.map(doc => ({ 
-        id: doc.id, 
-        ...doc.data() 
-      })) as LinkData[];
-      
-      setLinks(fetchedLinks);
+      await addLink({ title, url, icon });
+      toast.success("새 링크가 추가되었습니다.");
     } catch (error) {
-      console.error("Error fetching links:", error);
-    } finally {
-      setIsLoading(false);
+      console.error("Error adding link: ", error);
+      toast.error("링크 추가 중 오류가 발생했습니다.");
+    }
+  };
+
+  const handleUpdateLink = async (id: string, title: string, url: string) => {
+    const targetLink = links.find(l => l.id === id);
+    const trimmedTitle = title.trim();
+    const trimmedUrl = url.trim();
+
+    if (targetLink && targetLink.title === trimmedTitle && targetLink.url === trimmedUrl) {
+      return;
+    }
+
+    try {
+      const icon = getFaviconUrl(trimmedUrl);
+      await updateLink({ id, title: trimmedTitle, url: trimmedUrl, icon });
+      toast.success("링크가 업데이트되었습니다.");
+    } catch (error) {
+      console.error("Error updating link: ", error);
+      toast.error("링크 업데이트 중 오류가 발생했습니다.");
+    }
+  };
+
+  const handleDeleteLink = async (id: string) => {
+    try {
+      await deleteLink(id);
+      toast.success("링크가 삭제되었습니다.");
+    } catch (error) {
+      console.error("Error deleting link: ", error);
+      toast.error("링크 삭제 중 오류가 발생했습니다.");
     }
   };
 
@@ -190,83 +159,7 @@ export default function Page() {
     }
   };
 
-  const handleAddLink = async (title: string, url: string) => {
-    if (!user) return;
-    setIsAdding(true);
-    const icon = getFaviconUrl(url);
-    const newLinkData = {
-      title,
-      url,
-      icon,
-      clicks: 0,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    };
-    
-    try {
-      const userDocRef = doc(db, "users", user.uid);
-      const linksCollectionRef = collection(userDocRef, "link");
-      const docRef = await addDoc(linksCollectionRef, newLinkData);
-      
-      const addedLink: LinkData = { 
-        id: docRef.id, 
-        ...newLinkData, 
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-      
-      setLinks([addedLink, ...links]);
-    } catch (error) {
-      console.error("Error adding link: ", error);
-    } finally {
-      setIsAdding(false);
-    }
-  };
-
-  const handleUpdateLink = async (id: string, title: string, url: string) => {
-    if (!user) return;
-    
-    const targetLink = links.find(l => l.id === id);
-    const trimmedTitle = title.trim();
-    const trimmedUrl = url.trim();
-
-    if (targetLink && targetLink.title === trimmedTitle && targetLink.url === trimmedUrl) {
-      return;
-    }
-
-    try {
-      const icon = getFaviconUrl(trimmedUrl);
-      const linkDocRef = doc(db, "users", user.uid, "link", id);
-      
-      await updateDoc(linkDocRef, {
-        title: trimmedTitle,
-        url: trimmedUrl,
-        icon,
-        updatedAt: serverTimestamp(),
-      });
-
-      setLinks(prev => prev.map(link => 
-        link.id === id ? { ...link, title: trimmedTitle, url: trimmedUrl, icon, updatedAt: new Date() } : link
-      ));
-      toast.success("링크가 업데이트되었습니다.");
-    } catch (error) {
-      console.error("Error updating link: ", error);
-    }
-  };
-
-  const handleDeleteLink = async (id: string) => {
-    if (!user) return;
-    try {
-      const linkDocRef = doc(db, "users", user.uid, "link", id);
-      await deleteDoc(linkDocRef);
-
-      setLinks(prev => prev.filter(link => link.id !== id));
-    } catch (error) {
-      console.error("Error deleting link: ", error);
-    }
-  };
-
-  // 초기 인증 상태 로딩 중
+  // 초기 인증 상태 또는 유저 데이터 로딩 중
   if (isAuthLoading) {
     return (
       <div className="flex min-h-svh items-center justify-center bg-background">
@@ -274,8 +167,6 @@ export default function Page() {
       </div>
     );
   }
-
-  // 로그인 전 안내 화면
   if (!user) {
     return (
       <div className="relative min-h-svh flex flex-col items-center justify-center p-6 bg-background selection:bg-primary/30">

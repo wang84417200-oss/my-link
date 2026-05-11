@@ -72,7 +72,13 @@ export function InlineEditField({
 
     setIsSaving(true);
     try {
-      await onSave(editValue);
+      // 서버 응답을 기다리지 않고 즉시 편집 모드를 닫아 낙관적 업데이트 효과를 극대화합니다.
+      onSave(editValue).catch((err) => {
+        // 에러 발생 시 필요하다면 여기서 추가 처리를 할 수 있지만, 
+        // TanStack Query 훅에서 이미 롤백 처리를 하고 있습니다.
+        console.error("Inline edit save error:", err);
+      });
+      
       setIsEditing(false);
       setError(null);
     } catch (err) {
