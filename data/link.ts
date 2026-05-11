@@ -4,6 +4,8 @@ export interface LinkItem {
   url: string;
   icon?: string;
   clicks: number;
+  createdAt?: any;
+  updatedAt?: any;
 }
 
 export const dummyLinks: LinkItem[] = [
@@ -13,6 +15,8 @@ export const dummyLinks: LinkItem[] = [
     url: "https://instagram.com",
     icon: "https://s2.googleusercontent.com/s2/favicons?domain=instagram.com",
     clicks: 120,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
   {
     id: "2",
@@ -20,6 +24,8 @@ export const dummyLinks: LinkItem[] = [
     url: "https://youtube.com",
     icon: "https://s2.googleusercontent.com/s2/favicons?domain=youtube.com",
     clicks: 350,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
   {
     id: "3",
@@ -27,6 +33,8 @@ export const dummyLinks: LinkItem[] = [
     url: "https://blog.example.com",
     icon: "https://s2.googleusercontent.com/s2/favicons?domain=blog.example.com",
     clicks: 45,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
   {
     id: "4",
@@ -34,6 +42,8 @@ export const dummyLinks: LinkItem[] = [
     url: "https://github.com",
     icon: "https://s2.googleusercontent.com/s2/favicons?domain=github.com",
     clicks: 89,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
   {
     id: "5",
@@ -41,5 +51,7 @@ export const dummyLinks: LinkItem[] = [
     url: "https://portfolio.example.com",
     icon: "https://s2.googleusercontent.com/s2/favicons?domain=portfolio.example.com",
     clicks: 210,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
 ];

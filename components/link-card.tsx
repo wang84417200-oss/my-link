@@ -53,6 +53,8 @@ interface LinkData {
   url: string;
   icon?: string;
   clicks: number;
+  createdAt?: any;
+  updatedAt?: any;
 }
 
 interface LinkCardProps {

@@ -76,23 +76,25 @@ export function AddLinkDialog({ onAdd }: AddLinkDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="group relative w-full overflow-hidden border-border/50 bg-white/5 py-10 transition-all duration-500 hover:border-primary/50 hover:bg-primary/5 hover:shadow-[0_0_20px_-5px_oklch(var(--primary)/0.3)]"
-        >
-          {/* Background Gradient Shine Animation */}
-          <div className="absolute inset-0 translate-x-[-100%] bg-linear-to-r from-transparent via-white/10 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
+      <DialogTrigger
+        render={
+          <Button
+            variant="outline"
+            className="group relative w-full overflow-hidden border-border/50 bg-white/5 py-10 transition-all duration-500 hover:border-primary/50 hover:bg-primary/5 hover:shadow-[0_0_20px_-5px_oklch(var(--primary)/0.3)]"
+          />
+        }
+      >
+        {/* Background Gradient Shine Animation */}
+        <div className="absolute inset-0 translate-x-[-100%] bg-linear-to-r from-transparent via-white/10 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
 
-          <div className="relative flex flex-col items-center gap-1">
-            <span className="text-xl font-black tracking-tight text-foreground/90 transition-colors group-hover:text-primary">
-              새로운 링크 추가
-            </span>
-            <span className="text-xs font-medium text-muted-foreground/60 uppercase tracking-[0.2em]">
-              Add New Connection
-            </span>
-          </div>
-        </Button>
+        <div className="relative flex flex-col items-center gap-1">
+          <span className="text-xl font-black tracking-tight text-foreground/90 transition-colors group-hover:text-primary">
+            새로운 링크 추가
+          </span>
+          <span className="text-xs font-medium text-muted-foreground/60 uppercase tracking-[0.2em]">
+            Add New Connection
+          </span>
+        </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md border-border bg-background/98 backdrop-blur-2xl shadow-2xl overflow-hidden selection:bg-primary/30">
         {/* Decorative Background Decorative Blobs */}
