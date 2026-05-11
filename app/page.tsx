@@ -325,14 +325,11 @@ export default function Page() {
                   textClassName="text-2xl font-black tracking-tight text-foreground"
                 />
                 
-                <InlineEditField
-                  value={userData.displayName}
-                  onSave={(val) => handleUpdateProfile("displayName", val)}
-                  prefix="@"
-                  placeholder="디스플레이 네임"
-                  validate={checkDisplayName}
-                  textClassName="text-[15px] font-bold text-muted-foreground/70 tracking-tight"
-                />
+                <div className="flex items-center justify-center gap-1.5 px-3 py-1 rounded-full bg-muted/30 border border-border/5">
+                  <span className="text-[15px] font-bold text-muted-foreground/70 tracking-tight">
+                    @{userData.displayName}
+                  </span>
+                </div>
 
                 <InlineEditField
                   value={userData.bio || ""}
