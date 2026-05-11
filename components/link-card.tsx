@@ -79,12 +79,19 @@ export function LinkCard({ link, index, onUpdate, onDelete }: LinkCardProps) {
   });
 
   const handleUpdate = async (values: FormValues) => {
+    const trimmedTitle = values.title.trim();
+    const formattedUrl = values.url.trim().startsWith("http")
+      ? values.url.trim()
+      : `https://${values.url.trim()}`;
+
+    if (trimmedTitle === link.title && formattedUrl === link.url) {
+      setIsEditing(false);
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      const formattedUrl = values.url.startsWith("http")
-        ? values.url
-        : `https://${values.url}`;
-      await onUpdate(link.id, values.title, formattedUrl);
+      await onUpdate(link.id, trimmedTitle, formattedUrl);
       setIsEditing(false);
     } catch (error) {
       console.error("Failed to update link:", error);

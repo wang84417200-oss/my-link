@@ -25,11 +25,12 @@ import {
   updateDoc,
   deleteDoc,
   getDoc,
-  setDoc
+  setDoc,
+  where
 } from "firebase/firestore";
 import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User } from "firebase/auth";
 
-import { EditProfileDialog, ProfileFormValues } from "@/components/edit-profile-dialog";
+import { InlineEditField } from "@/components/inline-edit-field";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -67,7 +68,54 @@ export default function Page() {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   
-  const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
+  // 프로필 인라인 편집을 위한 상태 관리는 InlineEditField 내부에서 처리됨
+  // displayName 중복 체크 함수
+  const checkDisplayName = async (newDisplayName: string) => {
+    if (newDisplayName === userData?.displayName) return null;
+    
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("displayName", "==", newDisplayName));
+    const snapshot = await getDocs(q);
+
+    if (!snapshot.empty) {
+      return "이미 사용 중인 주소입니다.";
+    }
+    
+    if (!/^[a-z0-9-]+$/.test(newDisplayName)) {
+      return "영소문자, 숫자, 하이픈(-)만 사용할 수 있습니다.";
+    }
+    
+    if (newDisplayName.length < 3) {
+      return "최소 3자 이상 입력해 주세요.";
+    }
+
+    return null;
+  };
+
+  const handleUpdateProfile = async (field: keyof UserData, value: string) => {
+    if (!user || !userData) return;
+    
+    const trimmedValue = value.trim();
+    if (userData[field] === trimmedValue) return;
+
+    try {
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, {
+        [field]: trimmedValue
+      });
+      
+      setUserData({
+        ...userData,
+        [field]: trimmedValue
+      });
+      
+      toast.success("프로필이 업데이트되었습니다.");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast.error("업데이트 중 오류가 발생했습니다.");
+      throw error;
+    }
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -177,20 +225,30 @@ export default function Page() {
 
   const handleUpdateLink = async (id: string, title: string, url: string) => {
     if (!user) return;
+    
+    const targetLink = links.find(l => l.id === id);
+    const trimmedTitle = title.trim();
+    const trimmedUrl = url.trim();
+
+    if (targetLink && targetLink.title === trimmedTitle && targetLink.url === trimmedUrl) {
+      return;
+    }
+
     try {
-      const icon = getFaviconUrl(url);
+      const icon = getFaviconUrl(trimmedUrl);
       const linkDocRef = doc(db, "users", user.uid, "link", id);
       
       await updateDoc(linkDocRef, {
-        title,
-        url,
+        title: trimmedTitle,
+        url: trimmedUrl,
         icon,
         updatedAt: serverTimestamp(),
       });
 
       setLinks(prev => prev.map(link => 
-        link.id === id ? { ...link, title, url, icon, updatedAt: new Date() } : link
+        link.id === id ? { ...link, title: trimmedTitle, url: trimmedUrl, icon, updatedAt: new Date() } : link
       ));
+      toast.success("링크가 업데이트되었습니다.");
     } catch (error) {
       console.error("Error updating link: ", error);
     }
@@ -250,25 +308,10 @@ export default function Page() {
       
       {/* Global Overlays */}
       <Toaster position="top-center" richColors />
-      {userData && (
-        <EditProfileDialog 
-          open={isProfileDialogOpen}
-          onOpenChange={setIsProfileDialogOpen}
-          uid={user.uid}
-          initialData={{
-            username: userData.username,
-            displayName: userData.displayName,
-            bio: userData.bio || "",
-          }}
-          onSuccess={(newData: ProfileFormValues) => {
-            setUserData(prev => prev ? { ...prev, ...newData } : null);
-          }}
-        />
-      )}
 
       {/* Header for Admin (MyPage) */}
       <header className="fixed top-0 left-0 z-40 flex w-full items-center justify-center bg-background/80 backdrop-blur-md border-b border-border/10">
-        <div className="flex w-full max-w-6xl items-center justify-between px-8 py-5">
+        <div className="flex w-full max-w-md items-center justify-between px-6 py-4">
           <div className="flex items-center gap-2">
             <span className="text-2xl font-black tracking-tighter text-primary">MyLink</span>
           </div>
@@ -314,15 +357,6 @@ export default function Page() {
                   </div>
                   <span className="font-bold text-[13px]">내 프로필 링크 복사하기</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="cursor-pointer gap-3 py-3 px-3 rounded-xl transition-all focus:bg-primary/10 focus:text-primary group"
-                  onClick={() => setIsProfileDialogOpen(true)}
-                >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/5 group-focus:bg-primary/20 transition-colors">
-                    <RiPencilLine className="h-4 w-4" />
-                  </div>
-                  <span className="font-bold text-[13px]">프로필 및 소개글 수정</span>
-                </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator className="bg-border/40 mx-2" />
               <div className="p-1">
@@ -350,7 +384,7 @@ export default function Page() {
       )}
 
       {/* Main Content Area */}
-      <main className="relative z-10 mx-auto flex w-full max-w-2xl flex-col items-center px-6 pt-32 pb-20">
+      <main className="relative z-10 mx-auto flex w-full max-w-md flex-col items-center px-6 pt-28 pb-20">
         
         {/* Profile Section */}
         <div className="flex animate-reveal flex-col items-center text-center">
@@ -367,18 +401,35 @@ export default function Page() {
             </div>
           </div>
           
-          <div className="mt-6 flex flex-col gap-1.5">
-            <h1 className="text-2xl font-black tracking-tight text-foreground">
-              {userData?.username || '이름 없음'}
-            </h1>
-            <p className="text-[15px] font-bold text-muted-foreground/70 tracking-tight">
-              @{userData?.displayName || 'user'}
-            </p>
+          <div className="mt-6 flex flex-col items-center gap-1">
+            {userData && (
+              <>
+                <InlineEditField
+                  value={userData.username}
+                  onSave={(val) => handleUpdateProfile("username", val)}
+                  placeholder="이름을 입력해 주세요"
+                  textClassName="text-2xl font-black tracking-tight text-foreground"
+                />
+                
+                <InlineEditField
+                  value={userData.displayName}
+                  onSave={(val) => handleUpdateProfile("displayName", val)}
+                  prefix="@"
+                  placeholder="디스플레이 네임"
+                  validate={checkDisplayName}
+                  textClassName="text-[15px] font-bold text-muted-foreground/70 tracking-tight"
+                />
+
+                <InlineEditField
+                  value={userData.bio || ""}
+                  onSave={(val) => handleUpdateProfile("bio", val)}
+                  placeholder="소개글을 입력해 주세요"
+                  className="mt-3"
+                  textClassName="max-w-[320px] text-sm leading-relaxed text-muted-foreground/80"
+                />
+              </>
+            )}
           </div>
-          
-          <p className="mt-4 max-w-[280px] text-sm leading-relaxed text-muted-foreground/80">
-            {userData?.bio}
-          </p>
         </div>
 
         {/* Action Section */}
