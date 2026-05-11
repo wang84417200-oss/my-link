@@ -8,7 +8,9 @@ import {
   RiGoogleFill,
   RiLinksLine,
   RiPencilLine,
-  RiLogoutBoxLine
+  RiLogoutBoxLine,
+  RiArrowRightSLine,
+  RiExternalLinkLine
 } from "@remixicon/react";
 import { AddLinkDialog } from "@/components/add-link-dialog";
 import { LinkCard } from "@/components/link-card";
@@ -203,66 +205,87 @@ export default function Page() {
       {/* Header for Admin (MyPage) */}
       <header className="fixed top-0 left-0 z-40 flex w-full items-center justify-center bg-background/80 backdrop-blur-md border-b border-border/10">
         <div className="flex w-full max-w-md items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.location.href = "/"}>
             <span className="text-2xl font-black tracking-tighter text-primary">MyLink</span>
           </div>
-          
-          <DropdownMenu>
-            <DropdownMenuTrigger className="outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-full ring-offset-2 ring-offset-background transition-all hover:scale-105 active:scale-95">
-              <div className="h-9 w-9 overflow-hidden rounded-full border-2 border-primary/20 bg-muted">
-                {userData?.photoURL ? (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img src={userData.photoURL} alt="프로필" className="h-full w-full object-cover" />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-primary/10 text-primary">
-                    <span className="text-xs font-bold">{userData?.username?.[0] || "U"}</span>
-                  </div>
-                )}
-              </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent 
-              align="end" 
-              className="w-64 font-medium mt-2 border-border/40 bg-background/95 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] rounded-2xl overflow-hidden p-1.5 animate-in fade-in zoom-in-95 duration-200"
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => window.open(`/${userData?.displayName}`, '_blank')}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-[13px] font-bold bg-primary text-primary-foreground hover:opacity-90 shadow-sm shadow-primary/20 transition-all group active:scale-95"
             >
-              <DropdownMenuGroup>
-                <DropdownMenuLabel className="font-normal px-4 py-4 mb-1">
-                  <div className="flex flex-col space-y-1.5">
-                    <p className="text-sm font-black leading-none text-foreground tracking-tight">{userData?.username}</p>
-                    <p className="text-[12px] leading-none text-muted-foreground font-medium">
-                      {user.email}
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator className="bg-border/40 mx-2" />
-              <DropdownMenuGroup className="p-1">
-                <DropdownMenuItem 
-                  className="cursor-pointer gap-3 py-3 px-3 rounded-xl transition-all focus:bg-primary/10 focus:text-primary group"
-                  onClick={() => {
-                    navigator.clipboard.writeText(`${window.location.origin}/@${userData?.displayName}`);
-                    toast.success("링크가 복사 되었습니다");
-                  }}
-                >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/5 group-focus:bg-primary/20 transition-colors">
-                    <RiLinksLine className="h-4 w-4" />
-                  </div>
-                  <span className="font-bold text-[13px]">내 프로필 링크 복사하기</span>
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator className="bg-border/40 mx-2" />
-              <div className="p-1">
-                <DropdownMenuItem 
-                  className="cursor-pointer gap-3 py-3 px-3 rounded-xl text-destructive focus:bg-destructive/10 focus:text-destructive transition-all group"
-                  onClick={handleLogout}
-                >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-destructive/5 group-focus:bg-destructive/10 transition-colors">
-                    <RiLogoutBoxLine className="h-4 w-4" />
-                  </div>
-                  <span className="font-bold text-[13px]">로그아웃</span>
-                </DropdownMenuItem>
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              <RiExternalLinkLine className="h-4 w-4 group-hover:rotate-12 transition-transform" />
+              <span className="hidden sm:inline">내 페이지</span>
+            </button>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger className="outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-full ring-offset-2 ring-offset-background transition-all hover:scale-105 active:scale-95">
+                <div className="h-9 w-9 overflow-hidden rounded-full border-2 border-primary/20 bg-muted">
+                  {userData?.photoURL ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img src={userData.photoURL} alt="프로필" className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-primary/10 text-primary">
+                      <span className="text-xs font-bold">{userData?.username?.[0] || "U"}</span>
+                    </div>
+                  )}
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                align="end" 
+                className="w-64 font-medium mt-2 border-border/40 bg-background/95 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] rounded-2xl overflow-hidden p-1.5 animate-in fade-in zoom-in-95 duration-200"
+              >
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel className="font-normal px-4 py-4 mb-1">
+                    <div className="flex flex-col space-y-1.5">
+                      <p className="text-sm font-black leading-none text-foreground tracking-tight">{userData?.username}</p>
+                      <p className="text-[12px] leading-none text-muted-foreground font-medium">
+                        {user.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator className="bg-border/40 mx-2" />
+                <DropdownMenuGroup className="p-1">
+                  <DropdownMenuItem 
+                    className="cursor-pointer gap-3 py-3 px-3 rounded-xl transition-all focus:bg-primary/10 focus:text-primary group"
+                    onClick={() => {
+                      window.open(`/${userData?.displayName}`, '_blank');
+                    }}
+                  >
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/5 group-focus:bg-primary/20 transition-colors">
+                      <RiArrowRightSLine className="h-4 w-4" />
+                    </div>
+                    <span className="font-bold text-[13px]">내 페이지 보기</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    className="cursor-pointer gap-3 py-3 px-3 rounded-xl transition-all focus:bg-primary/10 focus:text-primary group"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${window.location.origin}/${userData?.displayName}`);
+                      toast.success("링크가 복사 되었습니다");
+                    }}
+                  >
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/5 group-focus:bg-primary/20 transition-colors">
+                      <RiLinksLine className="h-4 w-4" />
+                    </div>
+                    <span className="font-bold text-[13px]">내 프로필 링크 복사하기</span>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator className="bg-border/40 mx-2" />
+                <div className="p-1">
+                  <DropdownMenuItem 
+                    className="cursor-pointer gap-3 py-3 px-3 rounded-xl text-destructive focus:bg-destructive/10 focus:text-destructive transition-all group"
+                    onClick={handleLogout}
+                  >
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-destructive/5 group-focus:bg-destructive/10 transition-colors">
+                      <RiLogoutBoxLine className="h-4 w-4" />
+                    </div>
+                    <span className="font-bold text-[13px]">로그아웃</span>
+                  </DropdownMenuItem>
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </header>
 

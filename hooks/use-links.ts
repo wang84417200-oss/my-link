@@ -26,7 +26,7 @@ export function useLinks(user: User | null) {
     queryFn: async () => {
       if (!user) return [];
       const userDocRef = doc(db, "users", user.uid);
-      const linksCollectionRef = collection(userDocRef, "link");
+      const linksCollectionRef = collection(userDocRef, "links");
       const q = query(linksCollectionRef, orderBy("createdAt", "desc"));
       const snapshot = await getDocs(q);
       
@@ -42,7 +42,7 @@ export function useLinks(user: User | null) {
     mutationFn: async (newLink: Omit<LinkData, "id" | "clicks">) => {
       if (!user) throw new Error("User not authenticated");
       const userDocRef = doc(db, "users", user.uid);
-      const linksCollectionRef = collection(userDocRef, "link");
+      const linksCollectionRef = collection(userDocRef, "links");
       const docRef = await addDoc(linksCollectionRef, {
         ...newLink,
         clicks: 0,
@@ -59,7 +59,7 @@ export function useLinks(user: User | null) {
   const updateMutation = useMutation({
     mutationFn: async ({ id, title, url, icon }: { id: string; title: string; url: string; icon: string }) => {
       if (!user) throw new Error("User not authenticated");
-      const linkDocRef = doc(db, "users", user.uid, "link", id);
+      const linkDocRef = doc(db, "users", user.uid, "links", id);
       await updateDoc(linkDocRef, {
         title,
         url,
@@ -75,7 +75,7 @@ export function useLinks(user: User | null) {
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       if (!user) throw new Error("User not authenticated");
-      const linkDocRef = doc(db, "users", user.uid, "link", id);
+      const linkDocRef = doc(db, "users", user.uid, "links", id);
       await deleteDoc(linkDocRef);
     },
     onSettled: () => {
