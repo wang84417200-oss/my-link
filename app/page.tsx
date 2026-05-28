@@ -6,7 +6,7 @@ import {
   RiMore2Fill, 
   RiLoader4Line, 
   RiGoogleFill,
-  RiLinksLine,
+  RiLinkM,
   RiPencilLine,
   RiLogoutBoxLine,
   RiArrowRightSLine,
@@ -177,7 +177,7 @@ export default function Page() {
           {/* Hero Section (기존 디자인 유지 및 최적화) */}
           <div className="flex flex-col items-center text-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-linear-to-tr from-primary to-violet-500 shadow-xl shadow-primary/20">
-              <span role="img" aria-label="링크" className="text-4xl text-white">🔗</span>
+              <RiLinkM className="text-white h-10 w-10" />
             </div>
             <h1 className="text-4xl font-black tracking-tight text-foreground">
               MyLink
@@ -194,7 +194,7 @@ export default function Page() {
               {/* Feature 1 */}
               <div className="group flex items-start gap-4 rounded-3xl bg-card p-5 border border-border/40 shadow-sm transition-all hover:shadow-md hover:border-primary/20">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform group-hover:scale-110">
-                  <RiLinksLine className="h-6 w-6" />
+                  <RiLinkM className="h-6 w-6" />
                 </div>
                 <div className="flex flex-col gap-1">
                   <h3 className="font-bold text-foreground">원클릭 통합</h3>
@@ -358,7 +358,7 @@ export default function Page() {
                     }}
                   >
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/5 group-focus:bg-primary/20 transition-colors">
-                      <RiLinksLine className="h-4 w-4" />
+                      <RiLinkM className="h-4 w-4" />
                     </div>
                     <span className="font-bold text-[13px]">내 프로필 링크 복사하기</span>
                   </DropdownMenuItem>
