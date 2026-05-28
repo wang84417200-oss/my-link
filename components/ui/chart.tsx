@@ -85,19 +85,19 @@ const ChartTooltipContent = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        "rounded-xl border border-border/10 bg-card/90 p-3 shadow-2xl backdrop-blur-md text-[13px] font-medium tracking-tight",
+        "rounded-xl border border-amber-500/30 bg-card/90 p-3 shadow-[0_10px_35px_rgba(245,158,11,0.15)] dark:shadow-[0_10px_35px_rgba(245,158,11,0.25)] backdrop-blur-md text-[13px] font-medium tracking-tight transition-all duration-200 scale-102",
         className
       )}
     >
-      {!hideLabel && <div className="mb-1.5 font-bold text-foreground/90">{label}</div>}
+      {!hideLabel && <div className="mb-1.5 font-black text-foreground">{label}</div>}
       <div className="flex flex-col gap-1">
         {payload.map((item, idx) => (
           <div key={idx} className="flex items-center gap-1.5 text-muted-foreground">
             <span
-              className="h-2.5 w-2.5 shrink-0 rounded-sm"
-              style={{ backgroundColor: item.color || item.payload.fill }}
+              className="h-2.5 w-2.5 shrink-0 rounded-sm shadow-inner"
+              style={{ backgroundColor: item.color || item.payload.fill || "#f59e0b" }}
             />
-            <span className="font-bold text-foreground/90">
+            <span className="font-bold text-foreground">
               {item.value?.toLocaleString()}회 클릭
             </span>
           </div>
