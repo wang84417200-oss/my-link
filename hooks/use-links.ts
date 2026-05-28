@@ -11,10 +11,12 @@ import {
   query, 
   serverTimestamp, 
   updateDoc, 
-  deleteDoc 
+  deleteDoc,
+  onSnapshot
 } from "firebase/firestore";
 import { LinkData } from "@/types";
 import { User } from "firebase/auth";
+import { useEffect } from "react";
 
 export const LINKS_QUERY_KEY = ["links"];
 
@@ -36,7 +38,30 @@ export function useLinks(user: User | null) {
       })) as LinkData[];
     },
     enabled: !!user,
+    staleTime: Infinity, // 실시간 동기화를 사용하므로 TanStack Query가 자동으로 refetch하지 않도록 staleTime을 무한으로 설정
   });
+
+  useEffect(() => {
+    if (!user) return;
+
+    const userDocRef = doc(db, "users", user.uid);
+    const linksCollectionRef = collection(userDocRef, "links");
+    const q = query(linksCollectionRef, orderBy("createdAt", "desc"));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const updatedLinks = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as LinkData[];
+      
+      queryClient.setQueryData(LINKS_QUERY_KEY, updatedLinks);
+    }, (error) => {
+      console.error("Firestore onSnapshot error:", error);
+    });
+
+    return () => unsubscribe();
+  }, [user, queryClient]);
+
 
   const addMutation = useMutation({
     mutationFn: async (newLink: Omit<LinkData, "id" | "clicks">) => {

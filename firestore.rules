@@ -31,10 +31,9 @@ service cloud.firestore {
         allow update: if (
           // 1. 본인이 수정하는 경우 (제목, URL, 아이콘 등)
           (request.auth != null && request.auth.uid == userId) ||
-          // 2. 누구나 'clicks' 필드만 1씩 증가시키는 경우 (공개 페이지 클릭 집계)
+          // 2. 누구나 'clicks' 필드만 수정하는 경우 (공개 페이지 클릭 집계)
           (
-            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['clicks']) &&
-            request.resource.data.clicks == resource.data.clicks + 1
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly(['clicks'])
           )
         );
       }

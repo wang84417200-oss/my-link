@@ -10,7 +10,8 @@ import {
   RiCheckLine, 
   RiCloseLine,
   RiArrowRightSLine,
-  RiLoader4Line
+  RiLoader4Line,
+  RiEyeLine
 } from "@remixicon/react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -223,9 +224,12 @@ export function LinkCard({ link, index, onUpdate, onDelete }: LinkCardProps) {
             className="flex flex-1 flex-col truncate"
           >
             <span className="text-[17px] font-bold tracking-tight text-foreground/90">{link.title}</span>
-            <span className="text-[11px] font-semibold text-muted-foreground/60 uppercase tracking-widest">
-               {link.clicks.toLocaleString()} clicks
-            </span>
+            <div className="flex items-center gap-1 mt-1 text-muted-foreground">
+              <RiEyeLine size={13} className="text-primary/70" />
+              <span className="text-[11px] font-bold tracking-tight leading-none">
+                {(link.clicks ?? 0).toLocaleString()}
+              </span>
+            </div>
           </a>
           
           {/* Actions - Always Visible */}
