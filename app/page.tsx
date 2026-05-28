@@ -172,25 +172,105 @@ export default function Page() {
   }
   if (!user) {
     return (
-      <div className="relative min-h-svh flex flex-col items-center justify-center p-6 bg-background selection:bg-primary/30">
-        <div className="flex max-w-md flex-col items-center text-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-linear-to-tr from-primary to-violet-500 shadow-xl shadow-primary/20">
-            <span role="img" aria-label="링크" className="text-4xl text-white">🔗</span>
+      <div className="relative min-h-svh bg-background selection:bg-primary/30 overflow-x-hidden pb-32">
+        <main className="mx-auto flex w-full max-w-md flex-col items-center px-6 pt-20">
+          {/* Hero Section (기존 디자인 유지 및 최적화) */}
+          <div className="flex flex-col items-center text-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-linear-to-tr from-primary to-violet-500 shadow-xl shadow-primary/20">
+              <span role="img" aria-label="링크" className="text-4xl text-white">🔗</span>
+            </div>
+            <h1 className="text-4xl font-black tracking-tight text-foreground">
+              MyLink
+            </h1>
+            <p className="text-muted-foreground leading-relaxed">
+              나만의 멋진 멀티링크 프로필을 만들어보세요.<br/>
+              구글 계정으로 간편하게 시작할 수 있습니다.
+            </p>
           </div>
-          <h1 className="text-3xl font-black tracking-tight text-foreground">
-            MyLink
-          </h1>
-          <p className="text-muted-foreground leading-relaxed">
-            나만의 멋진 멀티링크 프로필을 만들어보세요.<br/>
-            구글 계정으로 간편하게 시작할 수 있습니다.
-          </p>
-          <button 
-            onClick={handleLogin}
-            className="mt-4 flex h-12 w-full max-w-[280px] items-center justify-center gap-3 rounded-full bg-foreground px-6 font-semibold text-background transition-transform hover:scale-[1.02] active:scale-95"
-          >
-            <RiGoogleFill className="h-5 w-5" />
-            Google로 시작하기
-          </button>
+
+          {/* Features Section */}
+          <div className="mt-20 flex w-full flex-col gap-6 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-150 fill-mode-both">
+            <div className="flex flex-col gap-3">
+              {/* Feature 1 */}
+              <div className="group flex items-start gap-4 rounded-3xl bg-card p-5 border border-border/40 shadow-sm transition-all hover:shadow-md hover:border-primary/20">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform group-hover:scale-110">
+                  <RiLinksLine className="h-6 w-6" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <h3 className="font-bold text-foreground">원클릭 통합</h3>
+                  <p className="text-[13px] text-muted-foreground leading-relaxed">흩어진 모든 링크를 단 하나의 페이지로 깔끔하게 모아보세요.</p>
+                </div>
+              </div>
+
+              {/* Feature 2 */}
+              <div className="group flex items-start gap-4 rounded-3xl bg-card p-5 border border-border/40 shadow-sm transition-all hover:shadow-md hover:border-violet-500/20">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-violet-500/10 text-violet-500 transition-transform group-hover:scale-110">
+                  <RiBarChartFill className="h-6 w-6" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <h3 className="font-bold text-foreground">실시간 통계</h3>
+                  <p className="text-[13px] text-muted-foreground leading-relaxed">누가 어떤 링크를 얼마나 클릭했는지 직관적으로 확인하세요.</p>
+                </div>
+              </div>
+
+              {/* Feature 3 */}
+              <div className="group flex items-start gap-4 rounded-3xl bg-card p-5 border border-border/40 shadow-sm transition-all hover:shadow-md hover:border-blue-500/20">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500 transition-transform group-hover:scale-110">
+                  <RiPencilLine className="h-6 w-6" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <h3 className="font-bold text-foreground">초간편 수정</h3>
+                  <p className="text-[13px] text-muted-foreground leading-relaxed">복잡한 설정 없이 내 페이지에서 직관적으로 바로 수정하세요.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* UI Demo Section */}
+          <div className="mt-20 flex w-full flex-col items-center gap-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300 fill-mode-both">
+            <div className="text-center">
+              <h2 className="text-xl font-black tracking-tight mb-2">나만의 커스텀 디자인</h2>
+              <p className="text-sm text-muted-foreground">방문자의 시선을 사로잡는 프로필 뷰</p>
+            </div>
+            
+            <div className="relative w-full max-w-[280px] rounded-[2.5rem] border-[6px] border-muted/50 bg-background p-4 shadow-2xl shadow-primary/10">
+              <div className="flex flex-col items-center gap-4 py-4">
+                <div className="relative group">
+                  <div className="absolute -inset-1 rounded-full bg-linear-to-tr from-primary to-violet-500 opacity-50 blur-sm"></div>
+                  <div className="relative h-16 w-16 rounded-full border-2 border-background bg-background flex items-center justify-center">
+                    <span role="img" aria-label="프로필" className="text-2xl">✨</span>
+                  </div>
+                </div>
+                <div className="flex flex-col items-center gap-1.5 text-center mt-2">
+                  <div className="h-4 w-20 rounded-full bg-foreground/10"></div>
+                  <div className="h-2.5 w-28 rounded-full bg-foreground/5 mt-1"></div>
+                </div>
+                <div className="mt-4 flex w-full flex-col gap-2.5">
+                  <div className="h-12 w-full rounded-2xl bg-card border border-border/40 flex items-center px-3 shadow-sm">
+                    <div className="h-7 w-7 rounded-full bg-primary/10"></div>
+                    <div className="ml-3 h-2 w-16 rounded-full bg-foreground/10"></div>
+                  </div>
+                  <div className="h-12 w-full rounded-2xl bg-card border border-border/40 flex items-center px-3 shadow-sm">
+                    <div className="h-7 w-7 rounded-full bg-violet-500/10"></div>
+                    <div className="ml-3 h-2 w-20 rounded-full bg-foreground/10"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        {/* Sticky Bottom CTA */}
+        <div className="fixed bottom-0 left-0 z-50 flex w-full justify-center bg-gradient-to-t from-background via-background/95 to-transparent pb-8 pt-16 px-6 pointer-events-none">
+          <div className="w-full max-w-md pointer-events-auto flex justify-center animate-in slide-in-from-bottom-10 duration-1000 delay-500 fill-mode-both">
+            <button 
+              onClick={handleLogin}
+              className="group flex h-14 w-[90%] items-center justify-center gap-3 rounded-full bg-foreground px-6 font-bold text-background transition-all hover:scale-[1.02] active:scale-95 shadow-xl shadow-primary/20 hover:shadow-primary/30"
+            >
+              <RiGoogleFill className="h-5 w-5 transition-transform group-hover:rotate-12" />
+              Google로 시작하기
+            </button>
+          </div>
         </div>
       </div>
     );
