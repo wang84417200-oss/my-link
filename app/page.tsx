@@ -10,7 +10,8 @@ import {
   RiPencilLine,
   RiLogoutBoxLine,
   RiArrowRightSLine,
-  RiExternalLinkLine
+  RiExternalLinkLine,
+  RiBarChartFill
 } from "@remixicon/react";
 import { AddLinkDialog } from "@/components/add-link-dialog";
 import { LinkCard } from "@/components/link-card";
@@ -257,6 +258,17 @@ export default function Page() {
                       <RiArrowRightSLine className="h-4 w-4" />
                     </div>
                     <span className="font-bold text-[13px]">내 페이지 보기</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    className="cursor-pointer gap-3 py-3 px-3 rounded-xl transition-all focus:bg-primary/10 focus:text-primary group"
+                    onClick={() => {
+                      window.location.href = "/stats";
+                    }}
+                  >
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/5 group-focus:bg-primary/20 transition-colors">
+                      <RiBarChartFill className="h-4 w-4" />
+                    </div>
+                    <span className="font-bold text-[13px]">통계 보기</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     className="cursor-pointer gap-3 py-3 px-3 rounded-xl transition-all focus:bg-primary/10 focus:text-primary group"
