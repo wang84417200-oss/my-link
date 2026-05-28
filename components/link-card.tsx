@@ -259,7 +259,7 @@ export function LinkCard({ link, index, onUpdate, onDelete }: LinkCardProps) {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-md border-border bg-background/98 backdrop-blur-2xl shadow-2xl">
+        <DialogContent className="sm:max-w-xl border-border bg-background/98 backdrop-blur-2xl shadow-2xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-black tracking-tight text-foreground">
               정말 삭제하시겠습니까?

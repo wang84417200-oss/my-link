@@ -173,7 +173,7 @@ export default function Page() {
   if (!user) {
     return (
       <div className="relative min-h-svh bg-background selection:bg-primary/30 overflow-x-hidden pb-32">
-        <main className="mx-auto flex w-full max-w-md flex-col items-center px-6 pt-20">
+        <main className="mx-auto flex w-full max-w-md md:max-w-2xl lg:max-w-3xl flex-col items-center px-6 pt-20">
           {/* Hero Section (기존 디자인 유지 및 최적화) */}
           <div className="flex flex-col items-center text-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-linear-to-tr from-primary to-violet-500 shadow-xl shadow-primary/20">
@@ -262,7 +262,7 @@ export default function Page() {
 
         {/* Sticky Bottom CTA */}
         <div className="fixed bottom-0 left-0 z-50 flex w-full justify-center bg-gradient-to-t from-background via-background/95 to-transparent pb-8 pt-16 px-6 pointer-events-none">
-          <div className="w-full max-w-md pointer-events-auto flex justify-center animate-in slide-in-from-bottom-10 duration-1000 delay-500 fill-mode-both">
+          <div className="w-full max-w-md md:max-w-2xl lg:max-w-3xl pointer-events-auto flex justify-center animate-in slide-in-from-bottom-10 duration-1000 delay-500 fill-mode-both">
             <button 
               onClick={handleLogin}
               className="group flex h-14 w-[90%] items-center justify-center gap-3 rounded-full bg-foreground px-6 font-bold text-background transition-all hover:scale-[1.02] active:scale-95 shadow-xl shadow-primary/20 hover:shadow-primary/30"
@@ -285,7 +285,7 @@ export default function Page() {
 
       {/* Header for Admin (MyPage) */}
       <header className="fixed top-0 left-0 z-40 flex w-full items-center justify-center bg-background/80 backdrop-blur-md border-b border-border/10">
-        <div className="flex w-full max-w-md items-center justify-between px-6 py-4">
+        <div className="flex w-full max-w-md md:max-w-2xl lg:max-w-3xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.location.href = "/"}>
             <span className="text-2xl font-black tracking-tighter text-primary">MyLink</span>
           </div>
@@ -390,7 +390,7 @@ export default function Page() {
       )}
 
       {/* Main Content Area */}
-      <main className="relative z-10 mx-auto flex w-full max-w-md flex-col items-center px-6 pt-28 pb-20">
+      <main className="relative z-10 mx-auto flex w-full max-w-md md:max-w-2xl lg:max-w-3xl flex-col items-center px-6 pt-28 pb-20">
         
         {/* Profile Section */}
         <div className="flex animate-reveal flex-col items-center text-center">

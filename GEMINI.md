@@ -21,7 +21,7 @@ This file serves as a guide for `Gemini CLI` to understand the project structure
 - **Analytics**: Display cumulative click counts for individual links.
 
 ### 2.2 UI/UX Design Principles (Based on `@docs/Wireframe.md`)
-- **Layout**: All screens (Public and Dashboard) are optimized for mobile with a `max-w-md` (approx. 448px) width constraint, centered on the screen (`mx-auto`).
+- **Layout**: All screens (Public and Dashboard) are responsive, using `max-w-md` for mobile and expanding up to `max-w-3xl` for desktop environments, centered on the screen (`mx-auto`).
 - **Inline Editing**: Use pencil icons next to text areas to trigger immediate editing without page navigation.
 - **Components**: Leverage `shadcn/ui` (e.g., `@components/ui/button.tsx`).
 

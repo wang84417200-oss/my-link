@@ -96,7 +96,7 @@ export function AddLinkDialog({ onAdd }: AddLinkDialogProps) {
           </span>
         </div>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md border-border bg-background/98 backdrop-blur-2xl shadow-2xl overflow-hidden selection:bg-primary/30">
+      <DialogContent className="sm:max-w-xl border-border bg-background/98 backdrop-blur-2xl shadow-2xl overflow-hidden selection:bg-primary/30">
         {/* Decorative Background Decorative Blobs */}
         <div className="absolute -top-24 -right-24 h-48 w-48 rounded-full bg-primary/5 blur-3xl opacity-30" />
         <div className="absolute -bottom-24 -left-24 h-48 w-48 rounded-full bg-violet-500/5 blur-3xl opacity-30" />

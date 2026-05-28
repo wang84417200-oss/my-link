@@ -99,7 +99,7 @@ export default function PublicProfilePage() {
       <div className="fixed -top-[10%] -right-[10%] h-[400px] w-[400px] rounded-full bg-primary/5 blur-[100px] pointer-events-none" />
       <div className="fixed -bottom-[10%] -left-[10%] h-[400px] w-[400px] rounded-full bg-violet-500/5 blur-[100px] pointer-events-none" />
 
-      <main className="relative z-10 mx-auto flex w-full max-w-md flex-col items-center px-6 pt-20 pb-20">
+      <main className="relative z-10 mx-auto flex w-full max-w-md md:max-w-2xl lg:max-w-3xl flex-col items-center px-6 pt-20 pb-20">
         
         {/* Profile Section */}
         <div className="flex animate-reveal flex-col items-center text-center">

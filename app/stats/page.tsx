@@ -96,7 +96,7 @@ export default function StatsPage() {
 
       {/* Shared Dashboard Header with Profile Dropdown */}
       <header className="fixed top-0 left-0 z-40 flex w-full items-center justify-center bg-background/80 backdrop-blur-md border-b border-border/10">
-        <div className="flex w-full max-w-md items-center justify-between px-6 py-4">
+        <div className="flex w-full max-w-md md:max-w-2xl lg:max-w-3xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.location.href = "/"}>
             <span className="text-2xl font-black tracking-tighter text-amber-500">MyLink</span>
           </div>
@@ -193,7 +193,7 @@ export default function StatsPage() {
       </header>
 
       {/* Main Stats Content */}
-      <main className="relative z-10 mx-auto flex w-full max-w-md flex-col px-6 pt-24 pb-20">
+      <main className="relative z-10 mx-auto flex w-full max-w-md md:max-w-2xl lg:max-w-3xl flex-col px-6 pt-24 pb-20">
         
         {/* Header Title section */}
         <div className="flex items-center justify-between mb-6 animate-reveal">

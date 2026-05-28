@@ -1,0 +1,9 @@
+feat: PC 환경을 위한 반응형 레이아웃 적용
+
+- 모바일 비율(max-w-md)로 고정되어 있던 레이아웃을 데스크탑 화면에서도 쾌적하게 볼 수 있도록 반응형(md:max-w-2xl lg:max-w-3xl)으로 확장
+- 변경된 파일:
+  - app/page.tsx: 관리자 대시보드 레이아웃 확장
+  - app/stats/page.tsx: 통계 화면 레이아웃 확장
+  - app/[displayName]/page.tsx: 방문자용 프로필 화면 레이아웃 확장
+- 링크 추가/수정 등 다이얼로그 모달창 크기도 반응형(sm:max-w-xl)으로 확장 (components/add-link-dialog.tsx, components/link-card.tsx)
+- GEMINI.md 및 docs/Wireframe.md 디자인 제약 사항 문서 업데이트
